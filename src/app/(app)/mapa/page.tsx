@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { EyeOff } from "lucide-react";
-import { FakeMapa } from "@/components/map/FakeMapa";
+import { MapaLive } from "@/components/map/MapaLive";
 import { useSession } from "@/lib/session/SessionProvider";
 import { useDbVersion } from "@/lib/repo/useLive";
 import { listContactos } from "@/lib/repo/contactos";
@@ -25,7 +25,6 @@ export default function MapaPage() {
         colportores: db.usuarios.filter((u) => u.rol === "colportor"),
       };
     }
-    // Evangelizador: solo su ubicación
     return {
       modo: "colportor" as const,
       centro,
@@ -54,7 +53,7 @@ export default function MapaPage() {
       </div>
 
       {data.modo === "monitor" ? (
-        <FakeMapa
+        <MapaLive
           modo="monitor"
           centro={data.centro}
           yo={data.yo}
@@ -62,7 +61,7 @@ export default function MapaPage() {
           colportores={data.colportores}
         />
       ) : (
-        <FakeMapa
+        <MapaLive
           modo="colportor"
           centro={data.centro}
           yo={data.yo}
@@ -72,13 +71,13 @@ export default function MapaPage() {
 
       {/* Leyenda solo para monitor */}
       {data.modo === "monitor" && (
-        <div className="absolute inset-x-0 bottom-4 z-10 mx-auto flex max-w-md flex-wrap items-center justify-center gap-2 px-4">
+        <div className="pointer-events-none absolute inset-x-0 bottom-4 z-10 mx-auto flex max-w-md flex-wrap items-center justify-center gap-2 px-4">
           <div className="card flex items-center gap-3 px-3 py-2 text-[11px] font-medium text-(--color-fg-muted)">
-            <Chip color="var(--color-status-contacted)" label="Contactado" />
-            <Chip color="var(--color-status-interested)" label="Interesado" />
-            <Chip color="var(--color-status-follow)" label="Seguimiento" />
-            <Chip color="var(--color-status-attending)" label="Asiste" />
-            <Chip color="var(--color-status-not)" label="No int." />
+            <Chip color="#F59E0B" label="Contactado" />
+            <Chip color="#22C55E" label="Interesado" />
+            <Chip color="#3B82F6" label="Seguimiento" />
+            <Chip color="#8B5CF6" label="Asiste" />
+            <Chip color="#EF4444" label="No int." />
           </div>
         </div>
       )}

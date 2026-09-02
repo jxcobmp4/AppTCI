@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus } from "lucide-react";
+import Image from "next/image";
 import { RegistrarSheet } from "@/features/registro/RegistrarSheet";
 
 export function FabRegistrar() {
@@ -11,10 +11,10 @@ export function FabRegistrar() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="fixed right-5 bottom-24 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-(--color-brand) text-white shadow-[0_10px_30px_-8px_rgba(79,70,229,0.55)] transition active:scale-95 hover:bg-(--color-brand-hover) safe-bottom"
+        className="fixed right-5 bottom-24 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-(--color-surface) shadow-[0_10px_30px_-8px_rgba(15,23,42,0.35)] ring-1 ring-(--color-border) transition active:scale-95 hover:bg-(--color-surface-2) safe-bottom"
         aria-label="Registrar contacto"
       >
-        <Plus size={26} strokeWidth={2.6} />
+        <Image src="/logoivpt.png" alt="Registrar" width={44} height={44} className="h-9 w-auto" priority />
       </button>
       <RegistrarSheet open={open} onClose={() => setOpen(false)} />
     </>

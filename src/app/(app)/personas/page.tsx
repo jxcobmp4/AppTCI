@@ -8,6 +8,7 @@ import { useSession } from "@/lib/session/SessionProvider";
 import { useDbVersion } from "@/lib/repo/useLive";
 import { listContactos, eliminarContacto, puedeEliminar } from "@/lib/repo/contactos";
 import { getDB } from "@/lib/repo/db";
+import { ContactoDetalleSheet } from "@/features/contactos/ContactoDetalleSheet";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import type { Contacto } from "@/types/domain";
@@ -16,6 +17,7 @@ export default function PersonasPage() {
   const { session } = useSession();
   const v = useDbVersion();
   const [q, setQ] = useState("");
+  const [detalle, setDetalle] = useState<Contacto | null>(null);
   const [confirming, setConfirming] = useState<Contacto | null>(null);
 
   const contactos = useMemo(
@@ -76,7 +78,7 @@ export default function PersonasPage() {
           <Users size={28} className="text-(--color-fg-subtle)" />
           <p className="text-sm font-medium">Sin resultados</p>
           <p className="text-xs text-(--color-fg-muted)">
-            Registra tu primer contacto con el botón <span className="text-(--color-brand)">+</span>.
+            Registra tu primer contacto con el botón del logo.
           </p>
         </div>
       ) : (
@@ -86,7 +88,12 @@ export default function PersonasPage() {
             return (
               <li key={c.id} className="card p-4">
                 <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0 flex-1">
+                  <button
+                    type="button"
+                    onClick={() => setDetalle(c)}
+                    className="min-w-0 flex-1 text-left"
+                    aria-label={`Ver detalles de ${c.nombre}`}
+                  >
                     <p className="truncate text-sm font-semibold">{c.nombre}</p>
                     <p className="mt-0.5 text-xs text-(--color-fg-muted)">
                       {format(new Date(c.creado_en), "d 'de' MMM, HH:mm", { locale: es })}
@@ -95,22 +102,22 @@ export default function PersonasPage() {
                       )}
                     </p>
                     {c.telefono && (
-                      <a
-                        href={`tel:${c.telefono.replace(/\s+/g, "")}`}
-                        className="mt-1 inline-flex items-center gap-1 text-xs text-(--color-brand)"
-                      >
+                      <span className="mt-1 inline-flex items-center gap-1 text-xs text-(--color-brand)">
                         <Phone size={12} />
                         {c.telefono}
-                      </a>
+                      </span>
                     )}
                     {c.nota && <p className="mt-2 line-clamp-2 text-xs text-(--color-fg-muted)">{c.nota}</p>}
-                  </div>
+                  </button>
                   <div className="flex flex-col items-end gap-2">
                     <StatusBadge status={c.estado} />
                     {canDelete && (
                       <button
                         type="button"
-                        onClick={() => setConfirming(c)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setConfirming(c);
+                        }}
                         className="rounded-lg p-1.5 text-(--color-fg-subtle) transition hover:bg-red-50 hover:text-(--color-error)"
                         aria-label={`Eliminar ${c.nombre}`}
                       >
@@ -125,7 +132,11 @@ export default function PersonasPage() {
         </ul>
       )}
 
-      {/* Confirmación de borrado */}
+      <ContactoDetalleSheet
+        contacto={detalle}
+        onClose={() => setDetalle(null)}
+      />
+
       {confirming && (
         <div className="fixed inset-0 z-50 flex items-end justify-center p-4 sm:items-center" role="dialog" aria-modal="true">
           <button

@@ -1,7 +1,9 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { ChevronRight } from "lucide-react";
 import { StatCard } from "@/components/ui/StatCard";
+import { ColportorContactosSheet } from "@/features/contactos/ColportorContactosSheet";
 import { useSession } from "@/lib/session/SessionProvider";
 import { useDbVersion } from "@/lib/repo/useLive";
 import { statsFor } from "@/lib/repo/stats";
@@ -9,6 +11,7 @@ import { statsFor } from "@/lib/repo/stats";
 export default function EstadisticasPage() {
   const { session } = useSession();
   const v = useDbVersion();
+  const [colportorAbierto, setColportorAbierto] = useState<string | null>(null);
 
   const stats = useMemo(
     () => (session ? statsFor(session) : null),
@@ -55,23 +58,38 @@ export default function EstadisticasPage() {
       {session.esMonitor && stats.ranking.length > 0 && (
         <section className="mt-6">
           <h2 className="text-sm font-semibold">Ranking del equipo</h2>
+          <p className="text-xs text-(--color-fg-muted)">Toca un colportor para ver sus contactos.</p>
           <ul className="mt-3 space-y-2">
             {stats.ranking.map((r, i) => (
-              <li key={r.usuarioId} className="card flex items-center justify-between p-3">
-                <div className="flex items-center gap-3">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-(--color-brand-soft) text-xs font-semibold text-(--color-brand)">
-                    {i + 1}
-                  </span>
-                  <span className="text-sm font-medium">{r.nombre}</span>
-                </div>
-                <span className="text-sm text-(--color-fg-muted)">
-                  {r.total} {r.total === 1 ? "contacto" : "contactos"}
-                </span>
+              <li key={r.usuarioId}>
+                <button
+                  type="button"
+                  onClick={() => setColportorAbierto(r.usuarioId)}
+                  className="card flex w-full items-center justify-between gap-3 p-3 text-left transition hover:bg-(--color-surface-2)"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-(--color-brand-soft) text-xs font-semibold text-(--color-brand)">
+                      {i + 1}
+                    </span>
+                    <span className="text-sm font-medium">{r.nombre}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-(--color-fg-muted)">
+                      {r.total} {r.total === 1 ? "contacto" : "contactos"}
+                    </span>
+                    <ChevronRight size={16} className="text-(--color-fg-subtle)" />
+                  </div>
+                </button>
               </li>
             ))}
           </ul>
         </section>
       )}
+
+      <ColportorContactosSheet
+        colportorId={colportorAbierto}
+        onClose={() => setColportorAbierto(null)}
+      />
     </div>
   );
 }
