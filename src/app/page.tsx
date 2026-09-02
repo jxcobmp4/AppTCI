@@ -1,6 +1,13 @@
-import { redirect } from "next/navigation";
+"use client";
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { getSessionUserId } from "@/lib/repo/db";
 
 export default function Root() {
-  // Provisional: hasta que exista sesión, entramos directo a la app.
-  redirect("/inicio");
+  const router = useRouter();
+  useEffect(() => {
+    router.replace(getSessionUserId() ? "/inicio" : "/login");
+  }, [router]);
+  return null;
 }

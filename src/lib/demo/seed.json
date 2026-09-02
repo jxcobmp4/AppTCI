@@ -1,0 +1,47 @@
+{
+  "iglesia": {
+    "id": "iglesia-central",
+    "nombre": "Iglesia Central",
+    "ciudad": "Bogotá",
+    "centro": { "lat": 4.711, "lng": -74.0721 }
+  },
+  "usuarios": [
+    { "id": "u_ana",   "nombre": "Ana Torres",    "rol": "monitor",       "email": "ana@demo.com",   "avatar": null, "ubicacion": { "lat": 4.7108, "lng": -74.0723 } },
+    { "id": "u_juan",  "nombre": "Juan Pérez",    "rol": "evangelizador", "email": "juan@demo.com",  "avatar": null, "ubicacion": { "lat": 4.7130, "lng": -74.0705 } },
+    { "id": "u_maria", "nombre": "María Gómez",   "rol": "evangelizador", "email": "maria@demo.com", "avatar": null, "ubicacion": { "lat": 4.7095, "lng": -74.0745 } },
+    { "id": "u_pedro", "nombre": "Pedro Ramírez", "rol": "evangelizador", "email": "pedro@demo.com", "avatar": null, "ubicacion": { "lat": 4.7080, "lng": -74.0700 } }
+  ],
+  "contactos": [
+    { "id": "c_001", "nombre": "Carlos Rodríguez",  "estado": "interested",     "nota": "Estuvimos hablando 15 min. Está interesado en conocer más.", "ubicacion": { "lat": 4.7125, "lng": -74.0710 }, "evangelizador_id": "u_juan",  "iglesia_id": "iglesia-central", "creado_en": "2026-08-29T14:20:00Z", "actualizado_en": "2026-08-29T14:20:00Z" },
+    { "id": "c_002", "nombre": "Laura Méndez",     "estado": "contacted",      "nota": "Muy amable, aceptó recibir información por WhatsApp.",       "ubicacion": { "lat": 4.7118, "lng": -74.0698 }, "evangelizador_id": "u_juan",  "iglesia_id": "iglesia-central", "creado_en": "2026-08-30T10:10:00Z", "actualizado_en": "2026-08-30T10:10:00Z" },
+    { "id": "c_003", "nombre": "Miguel Ávila",    "estado": "follow_up",      "nota": "Pidió que le llamáramos la próxima semana.",                  "ubicacion": { "lat": 4.7141, "lng": -74.0730 }, "evangelizador_id": "u_juan",  "iglesia_id": "iglesia-central", "creado_en": "2026-08-30T16:45:00Z", "actualizado_en": "2026-08-31T09:00:00Z" },
+    { "id": "c_004", "nombre": "Sofía Vargas",     "estado": "attending",      "nota": "Ya asistió a la reunión del jueves.",                          "ubicacion": { "lat": 4.7100, "lng": -74.0740 }, "evangelizador_id": "u_juan",  "iglesia_id": "iglesia-central", "creado_en": "2026-08-27T11:00:00Z", "actualizado_en": "2026-08-31T20:00:00Z" },
+    { "id": "c_005", "nombre": "Diego Ospina",    "estado": "not_interested", "nota": "Muy respetuoso pero no le interesa.",                          "ubicacion": { "lat": 4.7150, "lng": -74.0685 }, "evangelizador_id": "u_juan",  "iglesia_id": "iglesia-central", "creado_en": "2026-09-01T09:30:00Z", "actualizado_en": "2026-09-01T09:30:00Z" },
+    { "id": "c_006", "nombre": "Camila Bermúdez", "estado": "interested",     "nota": "Está pasando un momento difícil, agradeció mucho.",           "ubicacion": { "lat": 4.7099, "lng": -74.0712 }, "evangelizador_id": "u_juan",  "iglesia_id": "iglesia-central", "creado_en": "2026-09-01T18:00:00Z", "actualizado_en": "2026-09-01T18:00:00Z" },
+    { "id": "c_007", "nombre": "Andrés Rincón",   "estado": "contacted",      "nota": "Primer contacto breve, saludó y aceptó folleto.",             "ubicacion": { "lat": 4.7112, "lng": -74.0752 }, "evangelizador_id": "u_juan",  "iglesia_id": "iglesia-central", "creado_en": "2026-09-01T19:15:00Z", "actualizado_en": "2026-09-01T19:15:00Z" },
+
+    { "id": "c_008", "nombre": "Valentina Cruz",  "estado": "interested",     "nota": "Quiere venir el domingo con su hermana.",                      "ubicacion": { "lat": 4.7080, "lng": -74.0730 }, "evangelizador_id": "u_maria", "iglesia_id": "iglesia-central", "creado_en": "2026-08-28T15:00:00Z", "actualizado_en": "2026-08-28T15:00:00Z" },
+    { "id": "c_009", "nombre": "José Herrera",    "estado": "follow_up",      "nota": "Pidió oración por su hija.",                                    "ubicacion": { "lat": 4.7075, "lng": -74.0745 }, "evangelizador_id": "u_maria", "iglesia_id": "iglesia-central", "creado_en": "2026-08-30T12:30:00Z", "actualizado_en": "2026-08-31T18:00:00Z" },
+    { "id": "c_010", "nombre": "Isabela Ruiz",    "estado": "attending",      "nota": "Ya se integró al grupo de jóvenes.",                            "ubicacion": { "lat": 4.7085, "lng": -74.0760 }, "evangelizador_id": "u_maria", "iglesia_id": "iglesia-central", "creado_en": "2026-08-25T17:00:00Z", "actualizado_en": "2026-09-01T21:00:00Z" },
+    { "id": "c_011", "nombre": "Nicolás Peña",    "estado": "contacted",      "nota": "Muy joven, aceptó Instagram de la iglesia.",                   "ubicacion": { "lat": 4.7091, "lng": -74.0755 }, "evangelizador_id": "u_maria", "iglesia_id": "iglesia-central", "creado_en": "2026-09-01T11:20:00Z", "actualizado_en": "2026-09-01T11:20:00Z" },
+    { "id": "c_012", "nombre": "Daniela Correa",  "estado": "interested",     "nota": "Le interesa el ministerio de mujeres.",                         "ubicacion": { "lat": 4.7102, "lng": -74.0770 }, "evangelizador_id": "u_maria", "iglesia_id": "iglesia-central", "creado_en": "2026-09-01T13:40:00Z", "actualizado_en": "2026-09-01T13:40:00Z" },
+    { "id": "c_013", "nombre": "Sebastián Ortiz", "estado": "not_interested", "nota": "Ateo, conversación cordial pero corta.",                        "ubicacion": { "lat": 4.7070, "lng": -74.0725 }, "evangelizador_id": "u_maria", "iglesia_id": "iglesia-central", "creado_en": "2026-09-01T17:00:00Z", "actualizado_en": "2026-09-01T17:00:00Z" },
+
+    { "id": "c_014", "nombre": "Paula Restrepo",  "estado": "interested",     "nota": "Le llamó la atención lo del grupo de discipulado.",            "ubicacion": { "lat": 4.7060, "lng": -74.0695 }, "evangelizador_id": "u_pedro", "iglesia_id": "iglesia-central", "creado_en": "2026-08-29T10:00:00Z", "actualizado_en": "2026-08-29T10:00:00Z" },
+    { "id": "c_015", "nombre": "Ricardo Ayala",   "estado": "follow_up",      "nota": "Dejó su número. Llamar el lunes.",                              "ubicacion": { "lat": 4.7058, "lng": -74.0678 }, "evangelizador_id": "u_pedro", "iglesia_id": "iglesia-central", "creado_en": "2026-08-31T14:00:00Z", "actualizado_en": "2026-08-31T14:00:00Z" },
+    { "id": "c_016", "nombre": "Ximena Osorio",   "estado": "attending",      "nota": "Bautizada el mes pasado.",                                       "ubicacion": { "lat": 4.7065, "lng": -74.0710 }, "evangelizador_id": "u_pedro", "iglesia_id": "iglesia-central", "creado_en": "2026-08-20T16:00:00Z", "actualizado_en": "2026-08-31T20:00:00Z" },
+    { "id": "c_017", "nombre": "Fernando Silva",  "estado": "contacted",      "nota": "Contacto breve, muy cansado del trabajo.",                     "ubicacion": { "lat": 4.7050, "lng": -74.0720 }, "evangelizador_id": "u_pedro", "iglesia_id": "iglesia-central", "creado_en": "2026-09-01T08:30:00Z", "actualizado_en": "2026-09-01T08:30:00Z" },
+    { "id": "c_018", "nombre": "Adriana Molina",  "estado": "interested",     "nota": "Trae a su esposo el próximo domingo.",                         "ubicacion": { "lat": 4.7078, "lng": -74.0690 }, "evangelizador_id": "u_pedro", "iglesia_id": "iglesia-central", "creado_en": "2026-09-01T20:30:00Z", "actualizado_en": "2026-09-01T20:30:00Z" }
+  ],
+  "eventos": [
+    { "id": "e_001", "contacto_id": "c_001", "actor_id": "u_juan",  "tipo": "created", "payload": {},                                    "creado_en": "2026-08-29T14:20:00Z" },
+    { "id": "e_002", "contacto_id": "c_003", "actor_id": "u_juan",  "tipo": "status_changed", "payload": { "from": "contacted", "to": "follow_up" }, "creado_en": "2026-08-31T09:00:00Z" },
+    { "id": "e_003", "contacto_id": "c_004", "actor_id": "u_juan",  "tipo": "status_changed", "payload": { "from": "interested", "to": "attending" }, "creado_en": "2026-08-31T20:00:00Z" },
+    { "id": "e_004", "contacto_id": "c_006", "actor_id": "u_juan",  "tipo": "created", "payload": {},                                    "creado_en": "2026-09-01T18:00:00Z" },
+    { "id": "e_005", "contacto_id": "c_009", "actor_id": "u_maria", "tipo": "note_added", "payload": { "resumen": "Pidió oración por su hija." }, "creado_en": "2026-08-31T18:00:00Z" },
+    { "id": "e_006", "contacto_id": "c_010", "actor_id": "u_maria", "tipo": "status_changed", "payload": { "from": "interested", "to": "attending" }, "creado_en": "2026-09-01T21:00:00Z" },
+    { "id": "e_007", "contacto_id": "c_012", "actor_id": "u_maria", "tipo": "created", "payload": {},                                    "creado_en": "2026-09-01T13:40:00Z" },
+    { "id": "e_008", "contacto_id": "c_016", "actor_id": "u_pedro", "tipo": "status_changed", "payload": { "from": "interested", "to": "attending" }, "creado_en": "2026-08-31T20:00:00Z" },
+    { "id": "e_009", "contacto_id": "c_018", "actor_id": "u_pedro", "tipo": "created", "payload": {},                                    "creado_en": "2026-09-01T20:30:00Z" }
+  ]
+}
