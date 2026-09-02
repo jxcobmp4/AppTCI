@@ -22,12 +22,12 @@ export default function MapaPage() {
         centro,
         yo: session.user,
         contactos: listContactos(session),
-        evangelizadores: db.usuarios.filter((u) => u.rol === "evangelizador"),
+        colportores: db.usuarios.filter((u) => u.rol === "colportor"),
       };
     }
     // Evangelizador: solo su ubicación
     return {
-      modo: "evangelizador" as const,
+      modo: "colportor" as const,
       centro,
       yo: session.user,
       ubicacionYo: session.user.ubicacion ?? centro,
@@ -43,7 +43,7 @@ export default function MapaPage() {
       <div className="pointer-events-none absolute inset-x-0 top-0 z-10 flex justify-center p-4">
         {data.modo === "monitor" ? (
           <div className="card px-3 py-1.5 text-xs font-medium text-(--color-fg-muted)">
-            {data.contactos.length} contactos · {data.evangelizadores.length} evangelizadores
+            {data.contactos.length} contactos · {data.colportores.length} colportores
           </div>
         ) : (
           <div className="card flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-(--color-fg-muted)">
@@ -59,11 +59,11 @@ export default function MapaPage() {
           centro={data.centro}
           yo={data.yo}
           contactos={data.contactos}
-          evangelizadores={data.evangelizadores}
+          colportores={data.colportores}
         />
       ) : (
         <FakeMapa
-          modo="evangelizador"
+          modo="colportor"
           centro={data.centro}
           yo={data.yo}
           ubicacionYo={data.ubicacionYo}

@@ -52,10 +52,10 @@ export function statsFor(session: Session): Stats {
     const db = getDB();
     const grupos = new Map<string, number>();
     for (const c of db.contactos) {
-      grupos.set(c.evangelizador_id, (grupos.get(c.evangelizador_id) ?? 0) + 1);
+      grupos.set(c.colportor_id, (grupos.get(c.colportor_id) ?? 0) + 1);
     }
     ranking = db.usuarios
-      .filter((u) => u.rol === "evangelizador")
+      .filter((u) => u.rol === "colportor")
       .map((u) => ({ usuarioId: u.id, nombre: u.nombre, total: grupos.get(u.id) ?? 0 }))
       .sort((a, b) => b.total - a.total);
   }

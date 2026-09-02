@@ -3,8 +3,8 @@
 import type { DB } from "@/types/domain";
 import seed from "@/lib/demo/seed.json";
 
-const KEY_DB = "encuentro:db";
-const KEY_SESSION = "encuentro:sesion";
+const KEY_DB = "encuentro:db:v3";
+const KEY_SESSION = "encuentro:sesion:v3";
 
 type Listener = () => void;
 const listeners = new Set<Listener>();
@@ -17,9 +17,12 @@ function readRaw(): DB {
   if (!isBrowser()) return seed as unknown as DB;
   try {
     const raw = localStorage.getItem(KEY_DB);
-    if (raw) return JSON.parse(raw) as DB;
+    if (raw) {
+      const parsed = JSON.parse(raw) as DB;
+      if (parsed.version === (seed as unknown as DB).version) return parsed;
+    }
   } catch {
-    // corrupt data — reseed
+    // corrupt — reseed
   }
   const initial = structuredClone(seed) as unknown as DB;
   localStorage.setItem(KEY_DB, JSON.stringify(initial));
@@ -45,7 +48,7 @@ export function subscribeDB(listener: Listener): () => void {
   listeners.add(listener);
   if (isBrowser()) {
     const onStorage = (e: StorageEvent) => {
-      if (e.key === KEY_DB) listener();
+      if (e.key === KEY_DB || e.key === KEY_SESSION) listener();
     };
     window.addEventListener("storage", onStorage);
     return () => {
@@ -54,12 +57,6 @@ export function subscribeDB(listener: Listener): () => void {
     };
   }
   return () => listeners.delete(listener);
-}
-
-export function resetDB() {
-  if (!isBrowser()) return;
-  localStorage.setItem(KEY_DB, JSON.stringify(structuredClone(seed)));
-  for (const l of listeners) l();
 }
 
 // ----- sesión demo -----

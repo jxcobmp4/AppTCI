@@ -24,16 +24,17 @@ type GeoState =
 export function RegistrarSheet({ open, onClose }: Props) {
   const { session } = useSession();
   const [nombre, setNombre] = useState("");
+  const [telefono, setTelefono] = useState("");
   const [estado, setEstado] = useState<EstadoContacto>("contacted");
   const [nota, setNota] = useState("");
   const [geo, setGeo] = useState<GeoState>({ kind: "idle" });
   const [saving, setSaving] = useState(false);
   const nombreRef = useRef<HTMLInputElement>(null);
 
-  // Reset y foco cuando se abre
   useEffect(() => {
     if (!open) return;
     setNombre("");
+    setTelefono("");
     setEstado("contacted");
     setNota("");
     setGeo({ kind: "idle" });
@@ -41,7 +42,6 @@ export function RegistrarSheet({ open, onClose }: Props) {
     return () => clearTimeout(t);
   }, [open]);
 
-  // Pide GPS al abrir
   useEffect(() => {
     if (!open) return;
     if (typeof navigator === "undefined" || !navigator.geolocation) {
@@ -61,6 +61,7 @@ export function RegistrarSheet({ open, onClose }: Props) {
     if (!session) return;
     const parsed = nuevoContactoSchema.safeParse({
       nombre,
+      telefono: telefono || null,
       estado,
       nota: nota || undefined,
       ubicacion: geo.kind === "ok" ? geo.coords : null,
@@ -84,15 +85,13 @@ export function RegistrarSheet({ open, onClose }: Props) {
 
   return (
     <div className="fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label="Registrar contacto">
-      {/* Backdrop */}
       <button
         type="button"
         aria-label="Cerrar"
         onClick={onClose}
-        className="absolute inset-0 bg-black/40 animate-in fade-in"
+        className="absolute inset-0 bg-black/40"
       />
 
-      {/* Sheet */}
       <form
         onSubmit={onSubmit}
         className="absolute inset-x-0 bottom-0 mx-auto max-w-lg rounded-t-3xl bg-(--color-surface) p-5 shadow-[0_-8px_40px_-10px_rgba(15,23,42,0.25)] safe-bottom"
@@ -109,46 +108,65 @@ export function RegistrarSheet({ open, onClose }: Props) {
           </button>
         </header>
 
-        <label className="block">
-          <span className="text-xs font-medium text-(--color-fg-muted)">Nombre</span>
-          <input
-            ref={nombreRef}
-            type="text"
-            value={nombre}
-            onChange={(e) => setNombre(e.target.value)}
-            placeholder="Nombre de la persona"
-            className="mt-1 w-full rounded-xl border border-(--color-border) bg-(--color-surface) px-4 py-3 text-base outline-none focus:border-(--color-brand)"
-            enterKeyHint="next"
-            autoComplete="off"
-          />
-        </label>
+        <div className="max-h-[65vh] space-y-4 overflow-y-auto">
+          <label className="block">
+            <span className="text-xs font-medium text-(--color-fg-muted)">Nombre</span>
+            <input
+              ref={nombreRef}
+              type="text"
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
+              placeholder="Nombre de la persona"
+              className="mt-1 w-full rounded-xl border border-(--color-border) bg-(--color-surface) px-4 py-3 text-base outline-none focus:border-(--color-brand)"
+              enterKeyHint="next"
+              autoComplete="off"
+            />
+          </label>
 
-        <div className="mt-4">
-          <span className="text-xs font-medium text-(--color-fg-muted)">Estado</span>
-          <div className="mt-1">
-            <EstadoPicker value={estado} onChange={setEstado} />
+          <label className="block">
+            <span className="text-xs font-medium text-(--color-fg-muted)">Teléfono (opcional)</span>
+            <input
+              type="tel"
+              value={telefono}
+              onChange={(e) => setTelefono(e.target.value)}
+              placeholder="+57 300 123 4567"
+              className="mt-1 w-full rounded-xl border border-(--color-border) bg-(--color-surface) px-4 py-3 text-base outline-none focus:border-(--color-brand)"
+              enterKeyHint="next"
+              autoComplete="off"
+              inputMode="tel"
+            />
+          </label>
+
+          <div>
+            <span className="text-xs font-medium text-(--color-fg-muted)">Estado</span>
+            <div className="mt-1">
+              <EstadoPicker value={estado} onChange={setEstado} />
+            </div>
           </div>
-        </div>
 
-        <label className="mt-4 block">
-          <span className="text-xs font-medium text-(--color-fg-muted)">Nota (opcional)</span>
-          <textarea
-            value={nota}
-            onChange={(e) => setNota(e.target.value)}
-            rows={2}
-            placeholder="Ej: Quiere venir el domingo"
-            className="mt-1 w-full resize-none rounded-xl border border-(--color-border) bg-(--color-surface) px-4 py-3 text-sm outline-none focus:border-(--color-brand)"
-          />
-        </label>
+          <label className="block">
+            <span className="text-xs font-medium text-(--color-fg-muted)">Nota (opcional)</span>
+            <textarea
+              value={nota}
+              onChange={(e) => setNota(e.target.value)}
+              rows={2}
+              placeholder="Ej: Quiere venir el domingo"
+              className="mt-1 w-full resize-none rounded-xl border border-(--color-border) bg-(--color-surface) px-4 py-3 text-sm outline-none focus:border-(--color-brand)"
+            />
+          </label>
 
-        <div className="mt-3 flex items-center gap-2 rounded-xl bg-(--color-surface-2) px-3 py-2.5 text-xs">
-          <UbicacionEstado geo={geo} onRetry={() => {
-            setGeo({ kind: "loading" });
-            navigator.geolocation.getCurrentPosition(
-              (pos) => setGeo({ kind: "ok", coords: { lat: pos.coords.latitude, lng: pos.coords.longitude } }),
-              (err) => setGeo({ kind: err.code === err.PERMISSION_DENIED ? "denied" : "error" })
-            );
-          }} />
+          <div className="flex items-center gap-2 rounded-xl bg-(--color-surface-2) px-3 py-2.5 text-xs">
+            <UbicacionEstado
+              geo={geo}
+              onRetry={() => {
+                setGeo({ kind: "loading" });
+                navigator.geolocation.getCurrentPosition(
+                  (pos) => setGeo({ kind: "ok", coords: { lat: pos.coords.latitude, lng: pos.coords.longitude } }),
+                  (err) => setGeo({ kind: err.code === err.PERMISSION_DENIED ? "denied" : "error" })
+                );
+              }}
+            />
+          </div>
         </div>
 
         <button

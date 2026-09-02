@@ -13,8 +13,8 @@ const STATUS_COLORS: Record<Contacto["estado"], string> = {
 };
 
 type Props =
-  | { modo: "monitor"; contactos: Contacto[]; evangelizadores: Usuario[]; centro: LatLng; yo: Usuario }
-  | { modo: "evangelizador"; centro: LatLng; yo: Usuario; ubicacionYo: LatLng };
+  | { modo: "monitor"; contactos: Contacto[]; colportores: Usuario[]; centro: LatLng; yo: Usuario }
+  | { modo: "colportor"; centro: LatLng; yo: Usuario; ubicacionYo: LatLng };
 
 /** Mapa "de mentira" en SVG. Suficiente para validar UX. En Fase 6 se sustituye por MapLibre. */
 export function FakeMapa(props: Props) {
@@ -69,7 +69,7 @@ export function FakeMapa(props: Props) {
         {props.modo === "monitor" && (
           <>
             {/* Evangelizadores */}
-            {props.evangelizadores.map((e) => {
+            {props.colportores.map((e) => {
               if (!e.ubicacion) return null;
               const p = project(e.ubicacion);
               return (
@@ -103,7 +103,7 @@ export function FakeMapa(props: Props) {
           </>
         )}
 
-        {props.modo === "evangelizador" && (
+        {props.modo === "colportor" && (
           (() => {
             const p = project(props.ubicacionYo);
             return (

@@ -1,83 +1,222 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronRight } from "lucide-react";
-import { getDB, getSessionUserId, setSessionUserId } from "@/lib/repo/db";
-import type { Usuario } from "@/types/domain";
+import { ArrowLeft, ChevronRight, ShieldCheck, UserRound } from "lucide-react";
+import { toast } from "sonner";
+import { getSessionUserId } from "@/lib/repo/db";
+import { crearUsuarioYEntrar } from "@/lib/repo/usuarios";
+import { ciudadesDe, DEPARTAMENTOS } from "@/lib/data/colombia";
+import type { Rol } from "@/types/domain";
+
+type Step = { kind: "role" } | { kind: "form"; rol: Rol };
 
 export default function LoginPage() {
   const router = useRouter();
-  const [usuarios, setUsuarios] = useState<Usuario[]>([]);
+  const [step, setStep] = useState<Step>({ kind: "role" });
 
   useEffect(() => {
-    if (getSessionUserId()) {
-      router.replace("/inicio");
-      return;
-    }
-    setUsuarios(getDB().usuarios);
+    if (getSessionUserId()) router.replace("/inicio");
   }, [router]);
-
-  function entrar(id: string) {
-    setSessionUserId(id);
-    router.push("/inicio");
-  }
 
   return (
     <div className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6 py-10">
-      <div className="mb-8">
+      <header className="mb-8">
         <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-(--color-brand) text-lg font-bold text-white">
           E
         </div>
         <h1 className="text-2xl font-semibold tracking-tight">Bienvenido a Encuentro</h1>
         <p className="mt-1 text-sm text-(--color-fg-muted)">
-          Modo demo — elige una cuenta para probar la app.
+          {step.kind === "role"
+            ? "¿Cómo vas a ingresar?"
+            : step.rol === "monitor"
+            ? "Ingreso de monitor"
+            : "Ingreso de colportor"}
         </p>
-      </div>
+      </header>
 
-      <ul className="space-y-2">
-        {usuarios.map((u) => (
-          <li key={u.id}>
-            <button
-              type="button"
-              onClick={() => entrar(u.id)}
-              className="card flex w-full items-center gap-3 p-4 text-left transition hover:bg-(--color-surface-2)"
-            >
-              <span className="flex h-11 w-11 items-center justify-center rounded-full bg-(--color-brand-soft) text-sm font-semibold text-(--color-brand)">
-                {u.nombre.split(" ").map((s) => s[0]).slice(0, 2).join("")}
-              </span>
-              <span className="flex-1">
-                <span className="block text-sm font-semibold">{u.nombre}</span>
-                <span className="mt-0.5 flex items-center gap-1.5 text-xs text-(--color-fg-muted)">
-                  <RoleChip rol={u.rol} />
-                  <span>·</span>
-                  <span>{u.email}</span>
-                </span>
-              </span>
-              <ChevronRight size={18} className="text-(--color-fg-subtle)" />
-            </button>
-          </li>
-        ))}
-      </ul>
-
-      <p className="mt-8 text-center text-xs text-(--color-fg-subtle)">
-        Autenticación real (magic link con Supabase) en la Fase 3.
-      </p>
+      {step.kind === "role" ? (
+        <RolePicker onPick={(rol) => setStep({ kind: "form", rol })} />
+      ) : (
+        <FormRol rol={step.rol} onBack={() => setStep({ kind: "role" })} />
+      )}
     </div>
   );
 }
 
-function RoleChip({ rol }: { rol: Usuario["rol"] }) {
-  const isMonitor = rol === "monitor";
+function RolePicker({ onPick }: { onPick: (rol: Rol) => void }) {
   return (
-    <span
-      className={
-        isMonitor
-          ? "rounded-full bg-violet-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-violet-700"
-          : "rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-blue-700"
-      }
-    >
-      {isMonitor ? "Monitor" : "Evangelizador"}
-    </span>
+    <ul className="space-y-3">
+      <li>
+        <button
+          type="button"
+          onClick={() => onPick("monitor")}
+          className="card flex w-full items-center gap-4 p-5 text-left transition hover:bg-(--color-surface-2)"
+        >
+          <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-100 text-violet-700">
+            <ShieldCheck size={22} />
+          </span>
+          <span className="flex-1">
+            <span className="block text-base font-semibold">Monitor</span>
+            <span className="mt-0.5 block text-xs text-(--color-fg-muted)">
+              Acceso completo a la iglesia, equipo y estadísticas.
+            </span>
+          </span>
+          <ChevronRight size={18} className="text-(--color-fg-subtle)" />
+        </button>
+      </li>
+      <li>
+        <button
+          type="button"
+          onClick={() => onPick("colportor")}
+          className="card flex w-full items-center gap-4 p-5 text-left transition hover:bg-(--color-surface-2)"
+        >
+          <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-100 text-blue-700">
+            <UserRound size={22} />
+          </span>
+          <span className="flex-1">
+            <span className="block text-base font-semibold">Colportor</span>
+            <span className="mt-0.5 block text-xs text-(--color-fg-muted)">
+              Registra tus contactos, revisa tus estadísticas y tu ubicación.
+            </span>
+          </span>
+          <ChevronRight size={18} className="text-(--color-fg-subtle)" />
+        </button>
+      </li>
+
+      <li className="pt-2 text-center">
+        <p className="text-[11px] text-(--color-fg-subtle)">
+          Modo demo · autenticación real con Supabase en la Fase 3
+        </p>
+      </li>
+    </ul>
+  );
+}
+
+function FormRol({ rol, onBack }: { rol: Rol; onBack: () => void }) {
+  const router = useRouter();
+  const [departamento, setDepartamento] = useState("");
+  const [ciudad, setCiudad] = useState("");
+  const [nombre, setNombre] = useState("");
+  const [password, setPassword] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  const ciudades = useMemo(() => ciudadesDe(departamento), [departamento]);
+
+  const puedeEntrar =
+    !!departamento &&
+    !!ciudad &&
+    !!password.trim() &&
+    (rol === "monitor" || nombre.trim().length > 0);
+
+  function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!puedeEntrar) return;
+    setSaving(true);
+    try {
+      crearUsuarioYEntrar({
+        rol,
+        departamento,
+        ciudad,
+        nombre: rol === "colportor" ? nombre : undefined,
+      });
+      toast.success("Bienvenido a Encuentro");
+      router.push("/inicio");
+    } catch {
+      toast.error("No se pudo iniciar sesión");
+      setSaving(false);
+    }
+  }
+
+  return (
+    <form onSubmit={onSubmit} className="space-y-3">
+      <button
+        type="button"
+        onClick={onBack}
+        className="mb-1 inline-flex items-center gap-1 text-xs font-medium text-(--color-fg-muted) hover:text-(--color-fg)"
+      >
+        <ArrowLeft size={14} /> Volver
+      </button>
+
+      <Field label="Departamento">
+        <select
+          value={departamento}
+          onChange={(e) => {
+            setDepartamento(e.target.value);
+            setCiudad("");
+          }}
+          className="w-full appearance-none rounded-xl border border-(--color-border) bg-(--color-surface) px-4 py-3 text-sm outline-none focus:border-(--color-brand)"
+        >
+          <option value="">Elige un departamento</option>
+          {DEPARTAMENTOS.map((d) => (
+            <option key={d} value={d}>
+              {d}
+            </option>
+          ))}
+        </select>
+      </Field>
+
+      <Field label="Ciudad">
+        <select
+          value={ciudad}
+          onChange={(e) => setCiudad(e.target.value)}
+          disabled={!departamento}
+          className="w-full appearance-none rounded-xl border border-(--color-border) bg-(--color-surface) px-4 py-3 text-sm outline-none focus:border-(--color-brand) disabled:opacity-50"
+        >
+          <option value="">
+            {departamento ? "Elige una ciudad" : "Primero elige un departamento"}
+          </option>
+          {ciudades.map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
+          ))}
+        </select>
+      </Field>
+
+      {rol === "colportor" && (
+        <Field label="Nombre">
+          <input
+            type="text"
+            value={nombre}
+            onChange={(e) => setNombre(e.target.value)}
+            placeholder="Tu nombre y apellido"
+            className="w-full rounded-xl border border-(--color-border) bg-(--color-surface) px-4 py-3 text-sm outline-none focus:border-(--color-brand)"
+            autoComplete="name"
+          />
+        </Field>
+      )}
+
+      <Field label="Contraseña">
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Tu contraseña"
+          className="w-full rounded-xl border border-(--color-border) bg-(--color-surface) px-4 py-3 text-sm outline-none focus:border-(--color-brand)"
+          autoComplete="current-password"
+        />
+        <p className="mt-1 text-[11px] text-(--color-fg-subtle)">
+          En modo demo cualquier contraseña sirve.
+        </p>
+      </Field>
+
+      <button
+        type="submit"
+        disabled={!puedeEntrar || saving}
+        className="mt-2 w-full rounded-2xl bg-(--color-brand) px-4 py-3.5 text-base font-semibold text-white transition hover:bg-(--color-brand-hover) disabled:opacity-50"
+      >
+        {saving ? "Entrando..." : "Entrar"}
+      </button>
+    </form>
+  );
+}
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <label className="block">
+      <span className="text-xs font-medium text-(--color-fg-muted)">{label}</span>
+      <div className="mt-1">{children}</div>
+    </label>
   );
 }

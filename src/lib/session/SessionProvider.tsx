@@ -22,7 +22,6 @@ const SessionCtx = createContext<Ctx | null>(null);
 
 export function SessionProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  // ready = ya montamos en cliente y leímos localStorage
   const [ready, setReady] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [tick, setTick] = useState(0);
@@ -43,9 +42,8 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     return {
       user,
       esMonitor: user.rol === "monitor",
-      esEvangelizador: user.rol === "evangelizador",
+      esColportor: user.rol === "colportor",
     };
-    // Recalcular cuando cambie userId o cuando la DB haya mutado (tick).
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId, tick]);
 
@@ -68,7 +66,6 @@ export function useSession() {
   return ctx;
 }
 
-/** Envuelve una página cliente que requiere sesión: si no hay, redirige a /login. */
 export function useRequireSession() {
   const { session, ready } = useSession();
   const router = useRouter();

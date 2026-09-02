@@ -1,4 +1,4 @@
-export type Rol = "monitor" | "evangelizador";
+export type Rol = "monitor" | "colportor";
 
 export type EstadoContacto =
   | "contacted"
@@ -22,16 +22,19 @@ export type Usuario = {
   rol: Rol;
   email: string;
   avatar: string | null;
+  departamento?: string | null;
+  ciudad?: string | null;
   ubicacion?: LatLng | null;
 };
 
 export type Contacto = {
   id: string;
   nombre: string;
+  telefono: string | null;
   estado: EstadoContacto;
   nota: string;
   ubicacion: LatLng | null;
-  evangelizador_id: string;
+  colportor_id: string;
   iglesia_id: string;
   creado_en: string; // ISO
   actualizado_en: string; // ISO
@@ -41,7 +44,7 @@ export type EventoTipo =
   | "created"
   | "status_changed"
   | "note_added"
-  | "follow_up_added";
+  | "deleted";
 
 export type Evento = {
   id: string;
@@ -53,6 +56,7 @@ export type Evento = {
 };
 
 export type DB = {
+  version: number;
   iglesia: Iglesia;
   usuarios: Usuario[];
   contactos: Contacto[];
@@ -62,5 +66,5 @@ export type DB = {
 export type Session = {
   user: Usuario;
   esMonitor: boolean;
-  esEvangelizador: boolean;
+  esColportor: boolean;
 };

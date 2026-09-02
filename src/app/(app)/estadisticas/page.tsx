@@ -25,7 +25,7 @@ export default function EstadisticasPage() {
       <h1 className="text-2xl font-semibold tracking-tight">
         {session.esMonitor ? "Estadísticas" : "Mis estadísticas"}
       </h1>
-      {session.esEvangelizador && (
+      {session.esColportor && (
         <p className="mt-1 text-xs text-(--color-fg-muted)">Solo tú puedes ver tus números.</p>
       )}
 
