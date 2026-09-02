@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+@theme {
+  /* Colores base */
+  --color-bg: #F8FAFC;
+  --color-surface: #FFFFFF;
+  --color-surface-2: #F1F5F9;
+  --color-border: #E2E8F0;
+
+  --color-fg: #0F172A;
+  --color-fg-muted: #475569;
+  --color-fg-subtle: #94A3B8;
+
+  /* Marca */
+  --color-brand: #4F46E5;
+  --color-brand-hover: #4338CA;
+  --color-brand-soft: #EEF2FF;
+
+  /* Estados de contacto */
+  --color-status-contacted: #F59E0B;    /* 🟡 */
+  --color-status-interested: #22C55E;   /* 🟢 */
+  --color-status-follow: #3B82F6;       /* 🔵 */
+  --color-status-attending: #8B5CF6;    /* 🟣 */
+  --color-status-not: #EF4444;          /* 🔴 */
+
+  /* Feedback */
+  --color-success: #16A34A;
+  --color-warning: #F59E0B;
+  --color-error: #DC2626;
+
+  /* Radios */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
+
+  /* Sombras */
+  --shadow-soft: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.06);
+  --shadow-lifted: 0 8px 24px -12px rgba(15, 23, 42, 0.15);
+
+  /* Tipografía */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  /* Safe area para iOS */
+  .safe-top { padding-top: env(safe-area-inset-top); }
+  .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+}
+
+@layer components {
+  .card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+  }
+}
