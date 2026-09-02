@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ChevronRight, ShieldCheck, UserRound } from "lucide-react";
 import { toast } from "sonner";
@@ -21,11 +22,16 @@ export default function LoginPage() {
 
   return (
     <div className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6 py-10">
-      <header className="mb-8">
-        <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-(--color-brand) text-lg font-bold text-white">
-          E
-        </div>
-        <h1 className="text-2xl font-semibold tracking-tight">Bienvenido a Encuentro</h1>
+      <header className="mb-8 flex flex-col items-center text-center">
+        <Image
+          src="/logoivpt.png"
+          alt="IVPT"
+          width={96}
+          height={96}
+          priority
+          className="mb-4 h-24 w-auto"
+        />
+        <h1 className="text-2xl font-semibold tracking-tight">TCI Operacional</h1>
         <p className="mt-1 text-sm text-(--color-fg-muted)">
           {step.kind === "role"
             ? "¿Cómo vas a ingresar?"
