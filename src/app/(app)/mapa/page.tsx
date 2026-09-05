@@ -77,19 +77,19 @@ export default function MapaPage() {
     return () => window.removeEventListener("keydown", onKey);
   }, [fullscreen]);
 
-  // Fullscreen API del navegador cuando esté disponible (bonus en desktop).
-  // El overlay CSS ya cubre el layout, así que este paso es best-effort.
-  useEffect(() => {
-    const doc = typeof document !== "undefined" ? document : null;
-    if (!doc) return;
-    if (fullscreen) {
-      doc.documentElement.requestFullscreen?.().catch(() => {
-        /* iOS Safari u otros bloqueadores: seguimos con el overlay CSS */
-      });
-    } else if (doc.fullscreenElement) {
-      doc.exitFullscreen?.().catch(() => {});
-    }
-  }, [fullscreen]);
+  // El botón dispara request/exit en el contexto de gesto del usuario
+  // (imprescindible: los navegadores rechazan requestFullscreen fuera de
+  // un event handler). El overlay CSS cubre el layout si la API se rechaza.
+  const enterFullscreen = useCallback(() => {
+    setFullscreen(true);
+    document.documentElement.requestFullscreen?.().catch(() => {
+      /* iOS Safari u otros: seguimos con el overlay CSS */
+    });
+  }, []);
+  const exitFullscreen = useCallback(() => {
+    setFullscreen(false);
+    if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {});
+  }, []);
 
   if (!session || !data) return null;
 
@@ -127,7 +127,7 @@ export default function MapaPage() {
           {!fullscreen ? (
             <button
               type="button"
-              onClick={() => setFullscreen(true)}
+              onClick={enterFullscreen}
               className="flex items-center gap-1.5 rounded-full bg-(--color-surface) px-3 py-2 text-xs font-semibold text-(--color-fg) shadow-lifted ring-1 ring-(--color-border) transition hover:bg-(--color-surface-2)"
               aria-label="Ver mapa en pantalla completa"
             >
@@ -138,7 +138,7 @@ export default function MapaPage() {
           ) : (
             <button
               type="button"
-              onClick={() => setFullscreen(false)}
+              onClick={exitFullscreen}
               className="flex items-center gap-1.5 rounded-full bg-(--color-fg) px-3 py-2 text-xs font-semibold text-white shadow-lifted transition hover:bg-black"
               aria-label="Salir de pantalla completa"
             >

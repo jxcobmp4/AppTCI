@@ -7,11 +7,15 @@ import { useRequireSession } from "@/lib/session/SessionProvider";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const session = useRequireSession();
-  if (!session) return <div className="min-h-screen" />;
+  // Mantenemos siempre el shell (nav + fab) montado para evitar el flash
+  // entre "sesión null" y "sesión lista". El contenido solo se pinta cuando
+  // hay sesión; si no hay, useRequireSession ya redirige a /login.
   return (
     <div className="min-h-screen">
-      <main className="mx-auto max-w-lg pb-28 safe-top">{children}</main>
-      <FabRegistrar />
+      <main className="mx-auto max-w-lg pb-28 safe-top">
+        {session ? children : null}
+      </main>
+      {session && <FabRegistrar />}
       <BottomNav />
       <Toaster position="top-center" richColors />
     </div>
