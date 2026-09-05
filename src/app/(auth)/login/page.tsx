@@ -14,12 +14,9 @@ type Step = { kind: "role" } | { kind: "form"; rol: Rol };
 
 export default function LoginPage() {
   const router = useRouter();
-  const { session, ready } = useSession();
+  const { session, ready, configError } = useSession();
   const [step, setStep] = useState<Step>({ kind: "role" });
 
-  // Solo redirigimos cuando la sesión está RESUELTA a un usuario válido.
-  // Antes usábamos getSessionUserId() sin verificar el usuario, y un id
-  // huérfano provocaba loop /inicio ↔ /login (parpadeo).
   useEffect(() => {
     if (ready && session) router.replace("/inicio");
   }, [ready, session, router]);
@@ -44,6 +41,13 @@ export default function LoginPage() {
             : "Ingreso de colportor"}
         </p>
       </header>
+
+      {configError && (
+        <div className="mb-4 rounded-xl border border-amber-300 bg-amber-50 p-3 text-xs text-amber-900">
+          <p className="font-semibold">Configuración pendiente</p>
+          <p className="mt-1 whitespace-pre-wrap">{configError}</p>
+        </div>
+      )}
 
       {step.kind === "role" ? (
         <RolePicker onPick={(rol) => setStep({ kind: "form", rol })} />
