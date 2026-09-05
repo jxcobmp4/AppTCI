@@ -13,10 +13,6 @@ export const nuevoContactoSchema = z.object({
   telefono: z.string().trim().max(30).optional().nullable(),
   estado: estadoContactoSchema,
   nota: z.string().max(500).optional(),
-  ubicacion: z
-    .object({ lat: z.number(), lng: z.number() })
-    .nullable()
-    .optional(),
 });
 
 export type NuevoContactoInput = z.infer<typeof nuevoContactoSchema>;

@@ -25,6 +25,7 @@ export type Usuario = {
   departamento?: string | null;
   ciudad?: string | null;
   ubicacion?: LatLng | null;
+  ubicacion_actualizada_en?: string | null; // ISO
 };
 
 export type Contacto = {
@@ -33,7 +34,6 @@ export type Contacto = {
   telefono: string | null;
   estado: EstadoContacto;
   nota: string;
-  ubicacion: LatLng | null;
   colportor_id: string;
   iglesia_id: string;
   creado_en: string; // ISO

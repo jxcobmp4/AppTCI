@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { X, Phone, MessageCircle, MapPin, Calendar, User, Trash2 } from "lucide-react";
+import { X, Phone, MessageCircle, Calendar, User, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { format, formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
@@ -133,16 +133,6 @@ export function ContactoDetalleSheet({ contacto, onClose, onDelete }: Props) {
             </Row>
           )}
 
-          <Row icon={<MapPin size={16} />} label="Ubicación aproximada">
-            {contacto.ubicacion ? (
-              <p className="text-sm">
-                {contacto.ubicacion.lat.toFixed(5)}, {contacto.ubicacion.lng.toFixed(5)}
-                <span className="ml-1 text-xs text-(--color-fg-subtle)">(±100 m)</span>
-              </p>
-            ) : (
-              <p className="text-sm text-(--color-fg-muted)">Sin ubicación registrada</p>
-            )}
-          </Row>
         </dl>
 
         {canDelete && (

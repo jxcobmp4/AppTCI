@@ -1,6 +1,6 @@
 "use client";
 
-import type { Rol, Usuario } from "@/types/domain";
+import type { LatLng, Rol, Session, Usuario } from "@/types/domain";
 import { getDB, setSessionUserId, updateDB } from "./db";
 
 export type NuevoUsuario = {
@@ -32,10 +32,43 @@ export function crearUsuarioYEntrar(input: NuevoUsuario): Usuario {
     avatar: null,
     departamento: input.departamento,
     ciudad: input.ciudad,
-    ubicacion: getDB().iglesia.centro,
+    ubicacion: null,
+    ubicacion_actualizada_en: null,
   };
 
   updateDB((db) => ({ ...db, usuarios: [...db.usuarios, usuario] }));
   setSessionUserId(usuario.id);
   return usuario;
+}
+
+/**
+ * Actualiza la ubicación del usuario en sesión. Regla dura: solo puede escribir
+ * su propia fila. Cuando pasemos a Supabase, este mismo control es:
+ *   RLS: WITH CHECK (auth.uid() = id)
+ */
+export function actualizarMiUbicacion(session: Session, coords: LatLng): Usuario | null {
+  let updated: Usuario | null = null;
+  updateDB((db) => ({
+    ...db,
+    usuarios: db.usuarios.map((u) => {
+      if (u.id !== session.user.id) return u;
+      updated = {
+        ...u,
+        ubicacion: coords,
+        ubicacion_actualizada_en: new Date().toISOString(),
+      };
+      return updated;
+    }),
+  }));
+  return updated;
+}
+
+/**
+ * Devuelve los colportores de la iglesia que tienen ubicación registrada.
+ * Solo accesible para monitor. Cuando haya multi-iglesia, añadir filtro por
+ * iglesia_id (y su policy RLS: USING (iglesia_id = current_iglesia())).
+ */
+export function listColportoresConUbicacion(session: Session): Usuario[] {
+  if (!session.esMonitor) return [];
+  return getDB().usuarios.filter((u) => u.rol === "colportor" && u.ubicacion);
 }

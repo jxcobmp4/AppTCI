@@ -1,25 +1,18 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { X, MapPin, Loader2, Check } from "lucide-react";
+import { X } from "lucide-react";
 import { toast } from "sonner";
 import { EstadoPicker } from "./EstadoPicker";
 import { crearContacto } from "@/lib/repo/contactos";
 import { nuevoContactoSchema } from "@/lib/validators/contacto";
 import { useSession } from "@/lib/session/SessionProvider";
-import type { EstadoContacto, LatLng } from "@/types/domain";
+import type { EstadoContacto } from "@/types/domain";
 
 type Props = {
   open: boolean;
   onClose: () => void;
 };
-
-type GeoState =
-  | { kind: "idle" }
-  | { kind: "loading" }
-  | { kind: "ok"; coords: LatLng }
-  | { kind: "denied" }
-  | { kind: "error" };
 
 export function RegistrarSheet({ open, onClose }: Props) {
   const { session } = useSession();
@@ -27,7 +20,6 @@ export function RegistrarSheet({ open, onClose }: Props) {
   const [telefono, setTelefono] = useState("");
   const [estado, setEstado] = useState<EstadoContacto>("contacted");
   const [nota, setNota] = useState("");
-  const [geo, setGeo] = useState<GeoState>({ kind: "idle" });
   const [saving, setSaving] = useState(false);
   const nombreRef = useRef<HTMLInputElement>(null);
 
@@ -37,23 +29,8 @@ export function RegistrarSheet({ open, onClose }: Props) {
     setTelefono("");
     setEstado("contacted");
     setNota("");
-    setGeo({ kind: "idle" });
     const t = setTimeout(() => nombreRef.current?.focus(), 60);
     return () => clearTimeout(t);
-  }, [open]);
-
-  useEffect(() => {
-    if (!open) return;
-    if (typeof navigator === "undefined" || !navigator.geolocation) {
-      setGeo({ kind: "error" });
-      return;
-    }
-    setGeo({ kind: "loading" });
-    navigator.geolocation.getCurrentPosition(
-      (pos) => setGeo({ kind: "ok", coords: { lat: pos.coords.latitude, lng: pos.coords.longitude } }),
-      (err) => setGeo({ kind: err.code === err.PERMISSION_DENIED ? "denied" : "error" }),
-      { enableHighAccuracy: false, timeout: 8000, maximumAge: 60_000 }
-    );
   }, [open]);
 
   async function onSubmit(e: React.FormEvent) {
@@ -64,7 +41,6 @@ export function RegistrarSheet({ open, onClose }: Props) {
       telefono: telefono || null,
       estado,
       nota: nota || undefined,
-      ubicacion: geo.kind === "ok" ? geo.coords : null,
     });
     if (!parsed.success) {
       const msg = parsed.error.issues[0]?.message ?? "Datos inválidos";
@@ -154,19 +130,6 @@ export function RegistrarSheet({ open, onClose }: Props) {
               className="mt-1 w-full resize-none rounded-xl border border-(--color-border) bg-(--color-surface) px-4 py-3 text-sm outline-none focus:border-(--color-brand)"
             />
           </label>
-
-          <div className="flex items-center gap-2 rounded-xl bg-(--color-surface-2) px-3 py-2.5 text-xs">
-            <UbicacionEstado
-              geo={geo}
-              onRetry={() => {
-                setGeo({ kind: "loading" });
-                navigator.geolocation.getCurrentPosition(
-                  (pos) => setGeo({ kind: "ok", coords: { lat: pos.coords.latitude, lng: pos.coords.longitude } }),
-                  (err) => setGeo({ kind: err.code === err.PERMISSION_DENIED ? "denied" : "error" })
-                );
-              }}
-            />
-          </div>
         </div>
 
         <button
@@ -179,42 +142,4 @@ export function RegistrarSheet({ open, onClose }: Props) {
       </form>
     </div>
   );
-}
-
-function UbicacionEstado({ geo, onRetry }: { geo: GeoState; onRetry: () => void }) {
-  if (geo.kind === "loading") {
-    return (
-      <>
-        <Loader2 size={14} className="animate-spin text-(--color-fg-muted)" />
-        <span className="text-(--color-fg-muted)">Obteniendo ubicación aproximada...</span>
-      </>
-    );
-  }
-  if (geo.kind === "ok") {
-    return (
-      <>
-        <Check size={14} className="text-(--color-success)" />
-        <span className="text-(--color-fg-muted)">Ubicación aproximada obtenida</span>
-      </>
-    );
-  }
-  if (geo.kind === "denied") {
-    return (
-      <>
-        <MapPin size={14} className="text-(--color-warning)" />
-        <span className="text-(--color-fg-muted)">Sin permiso de ubicación · se guardará sin ella</span>
-        <button type="button" onClick={onRetry} className="ml-auto font-medium text-(--color-brand)">Reintentar</button>
-      </>
-    );
-  }
-  if (geo.kind === "error") {
-    return (
-      <>
-        <MapPin size={14} className="text-(--color-warning)" />
-        <span className="text-(--color-fg-muted)">No se pudo obtener ubicación</span>
-        <button type="button" onClick={onRetry} className="ml-auto font-medium text-(--color-brand)">Reintentar</button>
-      </>
-    );
-  }
-  return null;
 }
