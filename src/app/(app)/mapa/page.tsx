@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
-import { EyeOff, MapPin, Loader2, AlertCircle } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { EyeOff, MapPin, Loader2, AlertCircle, Maximize2, X } from "lucide-react";
 import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
@@ -10,6 +10,7 @@ import { useSession } from "@/lib/session/SessionProvider";
 import { useDbVersion } from "@/lib/repo/useLive";
 import { actualizarMiUbicacion, listColportoresConUbicacion } from "@/lib/repo/usuarios";
 import { getDB } from "@/lib/repo/db";
+import { cn } from "@/lib/utils";
 
 type Estado = "idle" | "pidiendo" | "denegado" | "error";
 
@@ -17,6 +18,7 @@ export default function MapaPage() {
   const { session } = useSession();
   const v = useDbVersion();
   const [estado, setEstado] = useState<Estado>("idle");
+  const [fullscreen, setFullscreen] = useState(false);
 
   const data = useMemo(() => {
     if (!session) return null;
@@ -65,6 +67,30 @@ export default function MapaPage() {
     );
   }, [session]);
 
+  // ESC sale de pantalla completa
+  useEffect(() => {
+    if (!fullscreen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setFullscreen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [fullscreen]);
+
+  // Fullscreen API del navegador cuando esté disponible (bonus en desktop).
+  // El overlay CSS ya cubre el layout, así que este paso es best-effort.
+  useEffect(() => {
+    const doc = typeof document !== "undefined" ? document : null;
+    if (!doc) return;
+    if (fullscreen) {
+      doc.documentElement.requestFullscreen?.().catch(() => {
+        /* iOS Safari u otros bloqueadores: seguimos con el overlay CSS */
+      });
+    } else if (doc.fullscreenElement) {
+      doc.exitFullscreen?.().catch(() => {});
+    }
+  }, [fullscreen]);
+
   if (!session || !data) return null;
 
   const yo = session.user;
@@ -73,9 +99,16 @@ export default function MapaPage() {
     : null;
 
   return (
-    <div className="relative h-[calc(100vh-6rem)]">
+    <div
+      className={cn(
+        "relative",
+        fullscreen
+          ? "fixed inset-0 z-[60] h-screen w-screen bg-(--color-bg)"
+          : "h-[calc(100vh-6rem)]"
+      )}
+    >
       {/* Chip informativo arriba */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-10 flex justify-center p-4">
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-10 flex items-center justify-center gap-2 p-4">
         {data.modo === "monitor" ? (
           <div className="card px-3 py-1.5 text-xs font-medium text-(--color-fg-muted)">
             {data.colportores.length} colportor{data.colportores.length === 1 ? "" : "es"} con ubicación activa
@@ -87,6 +120,34 @@ export default function MapaPage() {
           </div>
         )}
       </div>
+
+      {/* Botón fullscreen — solo monitor, esquina superior derecha */}
+      {data.modo === "monitor" && (
+        <div className="absolute right-3 top-3 z-20">
+          {!fullscreen ? (
+            <button
+              type="button"
+              onClick={() => setFullscreen(true)}
+              className="flex items-center gap-1.5 rounded-full bg-(--color-surface) px-3 py-2 text-xs font-semibold text-(--color-fg) shadow-lifted ring-1 ring-(--color-border) transition hover:bg-(--color-surface-2)"
+              aria-label="Ver mapa en pantalla completa"
+            >
+              <Maximize2 size={14} />
+              <span className="hidden sm:inline">Ver en pantalla completa</span>
+              <span className="sm:hidden">Pantalla completa</span>
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setFullscreen(false)}
+              className="flex items-center gap-1.5 rounded-full bg-(--color-fg) px-3 py-2 text-xs font-semibold text-white shadow-lifted transition hover:bg-black"
+              aria-label="Salir de pantalla completa"
+            >
+              <X size={14} />
+              Salir de pantalla completa
+            </button>
+          )}
+        </div>
+      )}
 
       {data.modo === "monitor" ? (
         <MapaLive

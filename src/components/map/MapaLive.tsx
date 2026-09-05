@@ -67,7 +67,13 @@ export function MapaLive(props: Props) {
         if (!cancelled) setReady(true);
       });
 
+      // Re-dimensiona el mapa cuando cambia el tamaño del contenedor
+      // (imprescindible al entrar/salir de pantalla completa).
+      const ro = new ResizeObserver(() => map.resize());
+      ro.observe(container.current);
+
       cleanup = () => {
+        ro.disconnect();
         markersRef.current.forEach((m) => m.remove());
         markersRef.current = [];
         map.remove();
