@@ -38,7 +38,13 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   const session = useMemo<Session | null>(() => {
     if (!userId) return null;
     const user = getDB().usuarios.find((u) => u.id === userId);
-    if (!user) return null;
+    if (!user) {
+      // Sesión huérfana: apunta a un usuario que ya no existe (p. ej. tras
+      // un reseed por cambio de schema). Limpiamos de forma silenciosa para
+      // evitar bucles /inicio <-> /login. El próximo tick actualizará userId.
+      if (typeof window !== "undefined") clearSession();
+      return null;
+    }
     return {
       user,
       esMonitor: user.rol === "monitor",

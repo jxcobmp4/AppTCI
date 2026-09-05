@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ChevronRight, ShieldCheck, UserRound } from "lucide-react";
 import { toast } from "sonner";
-import { getSessionUserId } from "@/lib/repo/db";
+import { useSession } from "@/lib/session/SessionProvider";
 import { crearUsuarioYEntrar } from "@/lib/repo/usuarios";
 import { ciudadesDe, DEPARTAMENTOS } from "@/lib/data/colombia";
 import type { Rol } from "@/types/domain";
@@ -14,11 +14,15 @@ type Step = { kind: "role" } | { kind: "form"; rol: Rol };
 
 export default function LoginPage() {
   const router = useRouter();
+  const { session, ready } = useSession();
   const [step, setStep] = useState<Step>({ kind: "role" });
 
+  // Solo redirigimos cuando la sesión está RESUELTA a un usuario válido.
+  // Antes usábamos getSessionUserId() sin verificar el usuario, y un id
+  // huérfano provocaba loop /inicio ↔ /login (parpadeo).
   useEffect(() => {
-    if (getSessionUserId()) router.replace("/inicio");
-  }, [router]);
+    if (ready && session) router.replace("/inicio");
+  }, [ready, session, router]);
 
   return (
     <div className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6 py-10">
