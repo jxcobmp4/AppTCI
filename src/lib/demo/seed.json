@@ -1,48 +1,12 @@
 {
-  "version": 4,
+  "version": 5,
   "iglesia": {
     "id": "iglesia-central",
     "nombre": "Iglesia Central",
     "ciudad": "Bogotá",
     "centro": { "lat": 4.711, "lng": -74.0721 }
   },
-  "usuarios": [
-    { "id": "u_ana",   "nombre": "Ana Torres",    "rol": "monitor",   "email": "ana@demo.com",   "avatar": null, "departamento": "Bogotá D.C.",  "ciudad": "Bogotá",  "ubicacion": null, "ubicacion_actualizada_en": null },
-    { "id": "u_juan",  "nombre": "Juan Pérez",    "rol": "colportor", "email": "juan@demo.com",  "avatar": null, "departamento": "Bogotá D.C.",  "ciudad": "Bogotá",  "ubicacion": { "lat": 4.7130, "lng": -74.0705 }, "ubicacion_actualizada_en": "2026-09-05T13:00:00Z" },
-    { "id": "u_maria", "nombre": "María Gómez",   "rol": "colportor", "email": "maria@demo.com", "avatar": null, "departamento": "Bogotá D.C.",  "ciudad": "Bogotá",  "ubicacion": { "lat": 4.7095, "lng": -74.0745 }, "ubicacion_actualizada_en": "2026-09-05T12:52:00Z" },
-    { "id": "u_pedro", "nombre": "Pedro Ramírez", "rol": "colportor", "email": "pedro@demo.com", "avatar": null, "departamento": "Bogotá D.C.",  "ciudad": "Bogotá",  "ubicacion": { "lat": 4.7080, "lng": -74.0700 }, "ubicacion_actualizada_en": "2026-09-05T12:45:00Z" }
-  ],
-  "contactos": [
-    { "id": "c_001", "nombre": "Carlos Rodríguez",  "telefono": "+57 300 111 2233", "estado": "interested",     "nota": "Estuvimos hablando 15 min. Está interesado en conocer más.", "colportor_id": "u_juan",  "iglesia_id": "iglesia-central", "creado_en": "2026-08-29T14:20:00Z", "actualizado_en": "2026-08-29T14:20:00Z" },
-    { "id": "c_002", "nombre": "Laura Méndez",      "telefono": "+57 301 222 3344", "estado": "contacted",      "nota": "Muy amable, aceptó recibir información por WhatsApp.",       "colportor_id": "u_juan",  "iglesia_id": "iglesia-central", "creado_en": "2026-08-30T10:10:00Z", "actualizado_en": "2026-08-30T10:10:00Z" },
-    { "id": "c_003", "nombre": "Miguel Ávila",     "telefono": null,                "estado": "follow_up",      "nota": "Pidió que le llamáramos la próxima semana.",                  "colportor_id": "u_juan",  "iglesia_id": "iglesia-central", "creado_en": "2026-08-30T16:45:00Z", "actualizado_en": "2026-08-31T09:00:00Z" },
-    { "id": "c_004", "nombre": "Sofía Vargas",      "telefono": "+57 310 333 4455", "estado": "attending",      "nota": "Ya asistió a la reunión del jueves.",                          "colportor_id": "u_juan",  "iglesia_id": "iglesia-central", "creado_en": "2026-08-27T11:00:00Z", "actualizado_en": "2026-08-31T20:00:00Z" },
-    { "id": "c_005", "nombre": "Diego Ospina",     "telefono": null,                "estado": "not_interested", "nota": "Muy respetuoso pero no le interesa.",                          "colportor_id": "u_juan",  "iglesia_id": "iglesia-central", "creado_en": "2026-09-01T09:30:00Z", "actualizado_en": "2026-09-01T09:30:00Z" },
-    { "id": "c_006", "nombre": "Camila Bermúdez",  "telefono": "+57 312 444 5566", "estado": "interested",     "nota": "Está pasando un momento difícil, agradeció mucho.",           "colportor_id": "u_juan",  "iglesia_id": "iglesia-central", "creado_en": "2026-09-01T18:00:00Z", "actualizado_en": "2026-09-01T18:00:00Z" },
-    { "id": "c_007", "nombre": "Andrés Rincón",    "telefono": "+57 313 555 6677", "estado": "contacted",      "nota": "Primer contacto breve, saludó y aceptó folleto.",             "colportor_id": "u_juan",  "iglesia_id": "iglesia-central", "creado_en": "2026-09-01T19:15:00Z", "actualizado_en": "2026-09-01T19:15:00Z" },
-
-    { "id": "c_008", "nombre": "Valentina Cruz",   "telefono": "+57 315 666 7788", "estado": "interested",     "nota": "Quiere venir el domingo con su hermana.",                      "colportor_id": "u_maria", "iglesia_id": "iglesia-central", "creado_en": "2026-08-28T15:00:00Z", "actualizado_en": "2026-08-28T15:00:00Z" },
-    { "id": "c_009", "nombre": "José Herrera",     "telefono": null,                "estado": "follow_up",      "nota": "Pidió oración por su hija.",                                    "colportor_id": "u_maria", "iglesia_id": "iglesia-central", "creado_en": "2026-08-30T12:30:00Z", "actualizado_en": "2026-08-31T18:00:00Z" },
-    { "id": "c_010", "nombre": "Isabela Ruiz",     "telefono": "+57 316 777 8899", "estado": "attending",      "nota": "Ya se integró al grupo de jóvenes.",                            "colportor_id": "u_maria", "iglesia_id": "iglesia-central", "creado_en": "2026-08-25T17:00:00Z", "actualizado_en": "2026-09-01T21:00:00Z" },
-    { "id": "c_011", "nombre": "Nicolás Peña",     "telefono": "+57 317 888 9900", "estado": "contacted",      "nota": "Muy joven, aceptó Instagram de la iglesia.",                   "colportor_id": "u_maria", "iglesia_id": "iglesia-central", "creado_en": "2026-09-01T11:20:00Z", "actualizado_en": "2026-09-01T11:20:00Z" },
-    { "id": "c_012", "nombre": "Daniela Correa",   "telefono": "+57 318 999 0011", "estado": "interested",     "nota": "Le interesa el ministerio de mujeres.",                         "colportor_id": "u_maria", "iglesia_id": "iglesia-central", "creado_en": "2026-09-01T13:40:00Z", "actualizado_en": "2026-09-01T13:40:00Z" },
-    { "id": "c_013", "nombre": "Sebastián Ortiz",  "telefono": null,                "estado": "not_interested", "nota": "Ateo, conversación cordial pero corta.",                        "colportor_id": "u_maria", "iglesia_id": "iglesia-central", "creado_en": "2026-09-01T17:00:00Z", "actualizado_en": "2026-09-01T17:00:00Z" },
-
-    { "id": "c_014", "nombre": "Paula Restrepo",   "telefono": "+57 320 111 2200", "estado": "interested",     "nota": "Le llamó la atención lo del grupo de discipulado.",            "colportor_id": "u_pedro", "iglesia_id": "iglesia-central", "creado_en": "2026-08-29T10:00:00Z", "actualizado_en": "2026-08-29T10:00:00Z" },
-    { "id": "c_015", "nombre": "Ricardo Ayala",    "telefono": "+57 321 222 3311", "estado": "follow_up",      "nota": "Dejó su número. Llamar el lunes.",                              "colportor_id": "u_pedro", "iglesia_id": "iglesia-central", "creado_en": "2026-08-31T14:00:00Z", "actualizado_en": "2026-08-31T14:00:00Z" },
-    { "id": "c_016", "nombre": "Ximena Osorio",    "telefono": "+57 322 333 4422", "estado": "attending",      "nota": "Bautizada el mes pasado.",                                       "colportor_id": "u_pedro", "iglesia_id": "iglesia-central", "creado_en": "2026-08-20T16:00:00Z", "actualizado_en": "2026-08-31T20:00:00Z" },
-    { "id": "c_017", "nombre": "Fernando Silva",   "telefono": null,                "estado": "contacted",      "nota": "Contacto breve, muy cansado del trabajo.",                     "colportor_id": "u_pedro", "iglesia_id": "iglesia-central", "creado_en": "2026-09-01T08:30:00Z", "actualizado_en": "2026-09-01T08:30:00Z" },
-    { "id": "c_018", "nombre": "Adriana Molina",   "telefono": "+57 323 444 5533", "estado": "interested",     "nota": "Trae a su esposo el próximo domingo.",                         "colportor_id": "u_pedro", "iglesia_id": "iglesia-central", "creado_en": "2026-09-01T20:30:00Z", "actualizado_en": "2026-09-01T20:30:00Z" }
-  ],
-  "eventos": [
-    { "id": "e_001", "contacto_id": "c_001", "actor_id": "u_juan",  "tipo": "created", "payload": {},                                    "creado_en": "2026-08-29T14:20:00Z" },
-    { "id": "e_002", "contacto_id": "c_003", "actor_id": "u_juan",  "tipo": "status_changed", "payload": { "from": "contacted", "to": "follow_up" }, "creado_en": "2026-08-31T09:00:00Z" },
-    { "id": "e_003", "contacto_id": "c_004", "actor_id": "u_juan",  "tipo": "status_changed", "payload": { "from": "interested", "to": "attending" }, "creado_en": "2026-08-31T20:00:00Z" },
-    { "id": "e_004", "contacto_id": "c_006", "actor_id": "u_juan",  "tipo": "created", "payload": {},                                    "creado_en": "2026-09-01T18:00:00Z" },
-    { "id": "e_005", "contacto_id": "c_009", "actor_id": "u_maria", "tipo": "note_added", "payload": { "resumen": "Pidió oración por su hija." }, "creado_en": "2026-08-31T18:00:00Z" },
-    { "id": "e_006", "contacto_id": "c_010", "actor_id": "u_maria", "tipo": "status_changed", "payload": { "from": "interested", "to": "attending" }, "creado_en": "2026-09-01T21:00:00Z" },
-    { "id": "e_007", "contacto_id": "c_012", "actor_id": "u_maria", "tipo": "created", "payload": {},                                    "creado_en": "2026-09-01T13:40:00Z" },
-    { "id": "e_008", "contacto_id": "c_016", "actor_id": "u_pedro", "tipo": "status_changed", "payload": { "from": "interested", "to": "attending" }, "creado_en": "2026-08-31T20:00:00Z" },
-    { "id": "e_009", "contacto_id": "c_018", "actor_id": "u_pedro", "tipo": "created", "payload": {},                                    "creado_en": "2026-09-01T20:30:00Z" }
-  ]
+  "usuarios": [],
+  "contactos": [],
+  "eventos": []
 }

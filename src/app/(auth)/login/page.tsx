@@ -118,6 +118,21 @@ function FormRol({ rol, onBack }: { rol: Rol; onBack: () => void }) {
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!puedeEntrar) return;
+
+    // Reglas de contraseña (modo demo)
+    if (rol === "monitor") {
+      if (password !== "Admin1") {
+        toast.error("Contraseña incorrecta");
+        return;
+      }
+    } else {
+      const esperada = `${nombre.trim()}144`;
+      if (password !== esperada) {
+        toast.error("Contraseña incorrecta");
+        return;
+      }
+    }
+
     setSaving(true);
     try {
       crearUsuarioYEntrar({
@@ -126,7 +141,7 @@ function FormRol({ rol, onBack }: { rol: Rol; onBack: () => void }) {
         ciudad,
         nombre: rol === "colportor" ? nombre : undefined,
       });
-      toast.success("Bienvenido a Encuentro");
+      toast.success("Bienvenido a TCI Operacional");
       router.push("/inicio");
     } catch {
       toast.error("No se pudo iniciar sesión");
@@ -202,9 +217,6 @@ function FormRol({ rol, onBack }: { rol: Rol; onBack: () => void }) {
           className="w-full rounded-xl border border-(--color-border) bg-(--color-surface) px-4 py-3 text-sm outline-none focus:border-(--color-brand)"
           autoComplete="current-password"
         />
-        <p className="mt-1 text-[11px] text-(--color-fg-subtle)">
-          En modo demo cualquier contraseña sirve.
-        </p>
       </Field>
 
       <button
