@@ -10,6 +10,7 @@ import { useSession } from "@/lib/session/SessionProvider";
 import { useDbVersion } from "@/lib/repo/useLive";
 import { actualizarMiUbicacion, listColportoresConUbicacion } from "@/lib/repo/usuarios";
 import { getDB } from "@/lib/repo/db";
+import { coordsDe } from "@/lib/data/colombia";
 import { cn } from "@/lib/utils";
 
 type Estado = "idle" | "pidiendo" | "denegado" | "error";
@@ -22,7 +23,11 @@ export default function MapaPage() {
 
   const data = useMemo(() => {
     if (!session) return null;
-    const centro = getDB().iglesia.centro;
+    // Centro del mapa: la ciudad que el usuario eligió al entrar. Fallback:
+    // el centro de la iglesia demo (Bogotá) si por alguna razón no hay match.
+    const centro =
+      coordsDe(session.user.departamento ?? "", session.user.ciudad ?? "") ??
+      getDB().iglesia.centro;
     if (session.esMonitor) {
       return {
         modo: "monitor" as const,
