@@ -24,6 +24,7 @@ export type Usuario = {
   avatar: string | null;
   departamento?: string | null;
   ciudad?: string | null;
+  iglesia_id?: string;
   ubicacion?: LatLng | null;
   ubicacion_actualizada_en?: string | null; // ISO
 };

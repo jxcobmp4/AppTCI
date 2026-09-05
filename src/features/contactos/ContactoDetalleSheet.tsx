@@ -138,9 +138,9 @@ export function ContactoDetalleSheet({ contacto, onClose, onDelete }: Props) {
         {canDelete && (
           <button
             type="button"
-            onClick={() => {
+            onClick={async () => {
               if (!confirm(`¿Eliminar a ${contacto.nombre}?`)) return;
-              const ok = eliminarContacto(session, contacto.id);
+              const ok = await eliminarContacto(session, contacto.id);
               if (ok) {
                 toast.success(`${contacto.nombre} eliminada`);
                 onDelete?.();

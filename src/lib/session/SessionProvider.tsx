@@ -2,19 +2,14 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import type { Session } from "@/types/domain";
-import {
-  clearSession,
-  getDB,
-  getSessionUserId,
-  setSessionUserId,
-  subscribeDB,
-} from "@/lib/repo/db";
+import type { Session, Usuario } from "@/types/domain";
+import { getSupabase } from "@/lib/supabase/client";
+import { hydrateFromSupabase, resetCache, subscribeDB, subscribeRealtime } from "@/lib/repo/db";
+import { cerrarSesion } from "@/lib/repo/usuarios";
 
 type Ctx = {
   session: Session | null;
   ready: boolean;
-  loginAs: (userId: string) => void;
   logout: () => void;
 };
 
@@ -23,46 +18,91 @@ const SessionCtx = createContext<Ctx | null>(null);
 export function SessionProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [ready, setReady] = useState(false);
-  const [userId, setUserId] = useState<string | null>(null);
-  const [tick, setTick] = useState(0);
+  const [profile, setProfile] = useState<Usuario | null>(null);
+  const [, force] = useState(0);
 
+  // Suscripción a cambios de la cache (para que los memos con useDbVersion
+  // recomputen cuando llega realtime).
+  useEffect(() => subscribeDB(() => force((n) => n + 1)), []);
+
+  // Carga inicial de sesión + suscripción a cambios de auth
   useEffect(() => {
-    setUserId(getSessionUserId());
-    setReady(true);
-    return subscribeDB(() => {
-      setUserId(getSessionUserId());
-      setTick((n) => n + 1);
+    let cancelled = false;
+    const sb = getSupabase();
+
+    async function cargarProfile(userId: string) {
+      const { data } = await sb.from("profiles").select("*").eq("id", userId).maybeSingle();
+      if (cancelled) return;
+      if (!data) {
+        setProfile(null);
+        setReady(true);
+        return;
+      }
+      const u: Usuario = {
+        id: data.id as string,
+        nombre: data.nombre as string,
+        rol: data.rol as Usuario["rol"],
+        email: "",
+        avatar: null,
+        departamento: (data.departamento as string) ?? null,
+        ciudad: (data.ciudad as string) ?? null,
+        iglesia_id: data.iglesia_id as string,
+        ubicacion:
+          data.ubicacion_lat != null && data.ubicacion_lng != null
+            ? { lat: data.ubicacion_lat as number, lng: data.ubicacion_lng as number }
+            : null,
+        ubicacion_actualizada_en: (data.ubicacion_actualizada_en as string) ?? null,
+      };
+      setProfile(u);
+      setReady(true);
+
+      // Hidratar cache de la iglesia + realtime
+      const fallback = { lat: 4.711, lng: -74.0721 };
+      await hydrateFromSupabase(u.iglesia_id!, fallback);
+      subscribeRealtime(u.iglesia_id!);
+    }
+
+    sb.auth.getUser().then(({ data }) => {
+      if (cancelled) return;
+      if (data.user) cargarProfile(data.user.id);
+      else {
+        setReady(true);
+      }
     });
+
+    const { data: sub } = sb.auth.onAuthStateChange((_event, s) => {
+      if (cancelled) return;
+      if (s?.user) {
+        cargarProfile(s.user.id);
+      } else {
+        resetCache();
+        setProfile(null);
+        setReady(true);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+      sub.subscription.unsubscribe();
+    };
   }, []);
 
   const session = useMemo<Session | null>(() => {
-    if (!userId) return null;
-    const user = getDB().usuarios.find((u) => u.id === userId);
-    if (!user) {
-      // Sesión huérfana: apunta a un usuario que ya no existe (p. ej. tras
-      // un reseed por cambio de schema). Limpiamos de forma silenciosa para
-      // evitar bucles /inicio <-> /login. El próximo tick actualizará userId.
-      if (typeof window !== "undefined") clearSession();
-      return null;
-    }
+    if (!profile) return null;
     return {
-      user,
-      esMonitor: user.rol === "monitor",
-      esColportor: user.rol === "colportor",
+      user: profile,
+      esMonitor: profile.rol === "monitor",
+      esColportor: profile.rol === "colportor",
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId, tick]);
+  }, [profile]);
 
-  const loginAs = useCallback((id: string) => setSessionUserId(id), []);
-  const logout = useCallback(() => {
-    clearSession();
+  const logout = useCallback(async () => {
+    await cerrarSesion();
     router.push("/login");
   }, [router]);
 
   return (
-    <SessionCtx.Provider value={{ session, ready, loginAs, logout }}>
-      {children}
-    </SessionCtx.Provider>
+    <SessionCtx.Provider value={{ session, ready, logout }}>{children}</SessionCtx.Provider>
   );
 }
 

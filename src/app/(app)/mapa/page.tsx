@@ -54,10 +54,14 @@ export default function MapaPage() {
     }
     setEstado("pidiendo");
     navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        actualizarMiUbicacion(session, { lat: pos.coords.latitude, lng: pos.coords.longitude });
+      async (pos) => {
+        const ok = await actualizarMiUbicacion(session, {
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+        });
         setEstado("idle");
-        toast.success("Ubicación actualizada ✓");
+        if (ok) toast.success("Ubicación actualizada ✓");
+        else toast.error("No se pudo guardar tu ubicación");
       },
       (err) => {
         if (err.code === err.PERMISSION_DENIED) {

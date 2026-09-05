@@ -39,9 +39,9 @@ export default function PersonasPage() {
 
   if (!session) return null;
 
-  function onDelete(c: Contacto) {
+  async function onDelete(c: Contacto) {
     if (!session) return;
-    const ok = eliminarContacto(session, c.id);
+    const ok = await eliminarContacto(session, c.id);
     if (ok) toast.success(`${c.nombre} eliminada`);
     else toast.error("No tienes permiso para eliminar esta persona");
     setConfirming(null);

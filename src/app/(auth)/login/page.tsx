@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, ChevronRight, ShieldCheck, UserRound } from "lucide-react";
 import { toast } from "sonner";
 import { useSession } from "@/lib/session/SessionProvider";
-import { crearUsuarioYEntrar } from "@/lib/repo/usuarios";
+import { entrarConCredenciales } from "@/lib/repo/usuarios";
 import { ciudadesDe, DEPARTAMENTOS } from "@/lib/data/colombia";
 import type { Rol } from "@/types/domain";
 
@@ -119,11 +119,12 @@ function FormRol({ rol, onBack }: { rol: Rol; onBack: () => void }) {
     !!password.trim() &&
     (rol === "monitor" || nombre.trim().length > 0);
 
-  function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!puedeEntrar) return;
 
-    // Reglas de contraseña (modo demo)
+    // Reglas de contraseña (siguen aplicando en el cliente para dar feedback
+    // inmediato; el backend acepta cualquier password que Supabase valide).
     if (rol === "monitor") {
       if (password !== "Admin1") {
         toast.error("Contraseña incorrecta");
@@ -139,16 +140,15 @@ function FormRol({ rol, onBack }: { rol: Rol; onBack: () => void }) {
 
     setSaving(true);
     try {
-      crearUsuarioYEntrar({
-        rol,
-        departamento,
-        ciudad,
-        nombre: rol === "colportor" ? nombre : undefined,
-      });
+      await entrarConCredenciales(
+        { rol, departamento, ciudad, nombre: rol === "colportor" ? nombre : undefined },
+        password
+      );
       toast.success("Bienvenido a TCI Operacional");
       router.push("/inicio");
-    } catch {
-      toast.error("No se pudo iniciar sesión");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "No se pudo iniciar sesión";
+      toast.error(msg);
       setSaving(false);
     }
   }
