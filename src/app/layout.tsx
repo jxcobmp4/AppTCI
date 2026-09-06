@@ -1,15 +1,16 @@
 import type { Metadata, Viewport } from "next";
+import { Toaster } from "sonner";
 import { SessionProvider } from "@/lib/session/SessionProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Encuentro",
-  description: "Registra y organiza el trabajo de evangelización de tu equipo.",
-  applicationName: "Encuentro",
+  title: "TCI Operacional",
+  description: "Gestión de colportores para tu iglesia.",
+  applicationName: "TCI Operacional",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Encuentro",
+    title: "TCI Operacional",
   },
 };
 
@@ -26,6 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="es">
       <body>
         <SessionProvider>{children}</SessionProvider>
+        <Toaster position="top-center" richColors />
       </body>
     </html>
   );

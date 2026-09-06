@@ -114,6 +114,7 @@ function FormRol({ rol, onBack }: { rol: Rol; onBack: () => void }) {
   const [nombre, setNombre] = useState("");
   const [password, setPassword] = useState("");
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const ciudades = useMemo(() => ciudadesDe(departamento), [departamento]);
 
@@ -126,18 +127,21 @@ function FormRol({ rol, onBack }: { rol: Rol; onBack: () => void }) {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!puedeEntrar) return;
+    setError(null);
 
-    // Reglas de contraseña (siguen aplicando en el cliente para dar feedback
-    // inmediato; el backend acepta cualquier password que Supabase valide).
     if (rol === "monitor") {
       if (password !== "Admin1") {
-        toast.error("Contraseña incorrecta");
+        const msg = "Contraseña incorrecta. La contraseña de monitor es Admin1.";
+        setError(msg);
+        toast.error(msg);
         return;
       }
     } else {
       const esperada = `${nombre.trim()}144`;
       if (password !== esperada) {
-        toast.error("Contraseña incorrecta");
+        const msg = `Contraseña incorrecta. Debe ser tu nombre seguido de 144 (ejemplo: ${nombre.trim() || "Nombre"}144).`;
+        setError(msg);
+        toast.error(msg);
         return;
       }
     }
@@ -152,6 +156,7 @@ function FormRol({ rol, onBack }: { rol: Rol; onBack: () => void }) {
       router.push("/inicio");
     } catch (err) {
       const msg = err instanceof Error ? err.message : "No se pudo iniciar sesión";
+      setError(msg);
       toast.error(msg);
       setSaving(false);
     }
@@ -225,7 +230,18 @@ function FormRol({ rol, onBack }: { rol: Rol; onBack: () => void }) {
           className="w-full rounded-xl border border-(--color-border) bg-(--color-surface) px-4 py-3 text-sm outline-none focus:border-(--color-brand)"
           autoComplete="current-password"
         />
+        <p className="mt-1 text-[11px] text-(--color-fg-subtle)">
+          {rol === "monitor"
+            ? "La contraseña del monitor es Admin1"
+            : "Tu contraseña es tu nombre pegado con 144 (ej: Valentina144)"}
+        </p>
       </Field>
+
+      {error && (
+        <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-xs text-red-800">
+          {error}
+        </div>
+      )}
 
       <button
         type="submit"
